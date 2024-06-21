@@ -39,16 +39,16 @@ public class JsonToPostgres {
                 // let's add only 100 first company's info to database
                 if (count++ >= 100) break;
 
-                long ariregistriKood = companyNode.get("ariregistri_kood").asLong();
-                String nimi = companyNode.get("nimi").asText();
+                long companyCode = companyNode.get("ariregistri_kood").asLong();
+                String name = companyNode.get("nimi").asText();
 
-                insertCompanyStmt.setLong(1, ariregistriKood);
-                insertCompanyStmt.setString(2, nimi);
+                insertCompanyStmt.setLong(1, companyCode);
+                insertCompanyStmt.setString(2, name);
                 insertCompanyStmt.executeUpdate();
 
-                JsonNode maarusedNode = companyNode.get("maarused");
-                for (JsonNode maarusNode : maarusedNode) {
-                    setOrderStatementParams(insertOrderStmt, ariregistriKood, maarusNode);
+                JsonNode regulationsNode = companyNode.get("maarused");
+                for (JsonNode regulationNode : regulationsNode) {
+                    setOrderStatementParams(insertOrderStmt, companyCode, regulationNode);
                     insertOrderStmt.executeUpdate();
                 }
             }
@@ -57,27 +57,27 @@ public class JsonToPostgres {
         }
     }
 
-    private void setOrderStatementParams(PreparedStatement insertOrderStmt, long ariregistriKood, JsonNode maarusNode) throws Exception {
+    private void setOrderStatementParams(PreparedStatement insertOrderStmt, long companyCode, JsonNode regulationNode) throws Exception {
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
 
-        insertOrderStmt.setLong(1, ariregistriKood);
-        insertOrderStmt.setString(2, maarusNode.get("maaruse_nr").asText());
+        insertOrderStmt.setLong(1, companyCode);
+        insertOrderStmt.setString(2, regulationNode.get("maaruse_nr").asText());
 
-        setDateOrNull(insertOrderStmt, 3, maarusNode, "maaruse_kpv", dateFormat);
-        setDateOrNull(insertOrderStmt, 4, maarusNode, "kande_kpv", dateFormat);
-        setDateOrNull(insertOrderStmt, 5, maarusNode, "lisatahtaeg", dateFormat);
+        setDateOrNull(insertOrderStmt, 3, regulationNode, "maaruse_kpv", dateFormat);
+        setDateOrNull(insertOrderStmt, 4, regulationNode, "kande_kpv", dateFormat);
+        setDateOrNull(insertOrderStmt, 5, regulationNode, "lisatahtaeg", dateFormat);
 
-        insertOrderStmt.setString(6, maarusNode.get("maaruse_liik").asText());
-        insertOrderStmt.setString(7, maarusNode.get("maaruse_liik_tekstina").asText());
-        insertOrderStmt.setString(8, maarusNode.get("maaruse_olek").asText());
-        insertOrderStmt.setString(9, maarusNode.get("maaruse_olek_tekstina").asText());
-        insertOrderStmt.setString(10, maarusNode.get("kandeliik").asText());
-        insertOrderStmt.setString(11, maarusNode.get("kandeliik_tekstina").asText());
+        insertOrderStmt.setString(6, regulationNode.get("maaruse_liik").asText());
+        insertOrderStmt.setString(7, regulationNode.get("maaruse_liik_tekstina").asText());
+        insertOrderStmt.setString(8, regulationNode.get("maaruse_olek").asText());
+        insertOrderStmt.setString(9, regulationNode.get("maaruse_olek_tekstina").asText());
+        insertOrderStmt.setString(10, regulationNode.get("kandeliik").asText());
+        insertOrderStmt.setString(11, regulationNode.get("kandeliik_tekstina").asText());
 
-        setDateOrNull(insertOrderStmt, 12, maarusNode, "joustumise_kpv", dateFormat);
+        setDateOrNull(insertOrderStmt, 12, regulationNode, "joustumise_kpv", dateFormat);
 
-        insertOrderStmt.setString(13, maarusNode.get("joust_olek").asText());
-        insertOrderStmt.setString(14, maarusNode.get("joust_olek_tekstina").asText());
+        insertOrderStmt.setString(13, regulationNode.get("joust_olek").asText());
+        insertOrderStmt.setString(14, regulationNode.get("joust_olek_tekstina").asText());
     }
 
     private void setDateOrNull(PreparedStatement insertOrderStmt, int index, JsonNode node, String fieldName, SimpleDateFormat dateFormat) throws Exception {
