@@ -37,7 +37,7 @@ public class JsonToPostgres {
 
             for (JsonNode companyNode : rootNode) {
                 // let's add only 100 first company's info to database
-                if (count++ >= 10) break;
+                if (count++ >= 100) break;
 
                 long ariregistriKood = companyNode.get("ariregistri_kood").asLong();
                 String nimi = companyNode.get("nimi").asText();
