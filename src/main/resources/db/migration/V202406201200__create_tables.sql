@@ -4,9 +4,10 @@ CREATE TABLE IF NOT EXISTS companies (
 );
 
 CREATE TABLE IF NOT EXISTS orders (
-    id SERIAL PRIMARY KEY,
+    id SERIAL,
     ariregistri_kood BIGINT REFERENCES companies(ariregistri_kood),
-    maaruse_nr VARCHAR(50),
+    CONSTRAINT fk_ariregistri_kood FOREIGN KEY (ariregistri_kood) REFERENCES companies (ariregistri_kood),
+    maaruse_nr VARCHAR(50) PRIMARY KEY,
     maaruse_kpv DATE,
     kande_kpv DATE,
     lisatahtaeg DATE,
